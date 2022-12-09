@@ -162,9 +162,7 @@ class GreatExpectationsOperator(BaseOperator):
         self.dataframe_to_validate: Optional[DataFrame] = dataframe_to_validate
         self.query_to_validate: Optional[str] = query_to_validate
         self.checkpoint_name: Optional[str] = checkpoint_name
-        self.checkpoint_config: Union[CheckpointConfig, Dict[Any, Any]] = (
-            checkpoint_config or {}
-        )
+        self.checkpoint_config: Union[CheckpointConfig, Dict[Any, Any]] = checkpoint_config or {}
         self.checkpoint_kwargs: Optional[Dict[str, Any]] = checkpoint_kwargs
         self.fail_task_on_validation_failure: Optional[bool] = fail_task_on_validation_failure
         self.validation_failure_callback: Optional[Callable[[CheckpointResult], None]] = validation_failure_callback
@@ -209,11 +207,7 @@ class GreatExpectationsOperator(BaseOperator):
                 " specified, the default Checkpoint is used."
             )
 
-        if (
-            not self.checkpoint_name
-            and not self.checkpoint_config
-            and not self.expectation_suite_name
-        ):
+        if not self.checkpoint_name and not self.checkpoint_config and not self.expectation_suite_name:
             raise ValueError(
                 "An expectation_suite_name must be supplied if neither checkpoint_name nor checkpoint_config are."
             )
@@ -526,12 +520,8 @@ class GreatExpectationsOperator(BaseOperator):
                 for _, value in result.run_results.items():
                     result_information = {
                         "statistics": value["validation_result"].statistics,
-                        "expectation_suite_name": value["validation_result"].meta[
-                            "expectation_suite_name"
-                        ],
-                        "batch_definition": value["validation_result"].meta[
-                            "active_batch_definition"
-                        ],
+                        "expectation_suite_name": value["validation_result"].meta["expectation_suite_name"],
+                        "batch_definition": value["validation_result"].meta["active_batch_definition"],
                     }
                     result_list.extend((result_information, "\n"))
                 if len(result_list) < 3:

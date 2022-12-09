@@ -71,39 +71,29 @@ def in_memory_data_context_config():
                     "class_name": "Datasource",
                 }
             },
-            "config_variables_file_path": os.path.join(
-                ge_root_dir, "uncommitted", "config_variables.yml"
-            ),
+            "config_variables_file_path": os.path.join(ge_root_dir, "uncommitted", "config_variables.yml"),
             "stores": {
                 "expectations_store": {
                     "class_name": "ExpectationsStore",
                     "store_backend": {
                         "class_name": "TupleFilesystemStoreBackend",
-                        "base_directory": os.path.join(
-                            ge_root_dir, "expectations"
-                        ),
+                        "base_directory": os.path.join(ge_root_dir, "expectations"),
                     },
                 },
                 "validations_store": {
                     "class_name": "ValidationsStore",
                     "store_backend": {
                         "class_name": "TupleFilesystemStoreBackend",
-                        "base_directory": os.path.join(
-                            ge_root_dir, "uncommitted", "validations"
-                        ),
+                        "base_directory": os.path.join(ge_root_dir, "uncommitted", "validations"),
                     },
                 },
-                "evaluation_parameter_store": {
-                    "class_name": "EvaluationParameterStore"
-                },
+                "evaluation_parameter_store": {"class_name": "EvaluationParameterStore"},
                 "checkpoint_store": {
                     "class_name": "CheckpointStore",
                     "store_backend": {
                         "class_name": "TupleFilesystemStoreBackend",
                         "suppress_store_backend_id": True,
-                        "base_directory": os.path.join(
-                            ge_root_dir, "checkpoints"
-                        ),
+                        "base_directory": os.path.join(ge_root_dir, "checkpoints"),
                     },
                 },
             },
@@ -124,9 +114,7 @@ def in_memory_data_context_config():
                             "local_site",
                         ),
                     },
-                    "site_index_builder": {
-                        "class_name": "DefaultSiteIndexBuilder"
-                    },
+                    "site_index_builder": {"class_name": "DefaultSiteIndexBuilder"},
                 }
             },
             "anonymous_usage_statistics": {
@@ -158,9 +146,7 @@ def in_memory_checkpoint_config():
                 },
                 {
                     "name": "store_evaluation_params",
-                    "action": {
-                        "class_name": "StoreEvaluationParametersAction"
-                    },
+                    "action": {"class_name": "StoreEvaluationParametersAction"},
                 },
                 {
                     "name": "update_data_docs",
