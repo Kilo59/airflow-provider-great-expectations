@@ -42,7 +42,7 @@ ge_root_dir = os.path.join(base_path, "include", "great_expectations")
 
 @pytest.fixture()
 def in_memory_data_context_config():
-    data_context_config = DataContextConfig(
+    return DataContextConfig(
         **{
             "config_version": 3.0,
             "datasources": {
@@ -71,29 +71,39 @@ def in_memory_data_context_config():
                     "class_name": "Datasource",
                 }
             },
-            "config_variables_file_path": os.path.join(ge_root_dir, "uncommitted", "config_variables.yml"),
+            "config_variables_file_path": os.path.join(
+                ge_root_dir, "uncommitted", "config_variables.yml"
+            ),
             "stores": {
                 "expectations_store": {
                     "class_name": "ExpectationsStore",
                     "store_backend": {
                         "class_name": "TupleFilesystemStoreBackend",
-                        "base_directory": os.path.join(ge_root_dir, "expectations"),
+                        "base_directory": os.path.join(
+                            ge_root_dir, "expectations"
+                        ),
                     },
                 },
                 "validations_store": {
                     "class_name": "ValidationsStore",
                     "store_backend": {
                         "class_name": "TupleFilesystemStoreBackend",
-                        "base_directory": os.path.join(ge_root_dir, "uncommitted", "validations"),
+                        "base_directory": os.path.join(
+                            ge_root_dir, "uncommitted", "validations"
+                        ),
                     },
                 },
-                "evaluation_parameter_store": {"class_name": "EvaluationParameterStore"},
+                "evaluation_parameter_store": {
+                    "class_name": "EvaluationParameterStore"
+                },
                 "checkpoint_store": {
                     "class_name": "CheckpointStore",
                     "store_backend": {
                         "class_name": "TupleFilesystemStoreBackend",
                         "suppress_store_backend_id": True,
-                        "base_directory": os.path.join(ge_root_dir, "checkpoints"),
+                        "base_directory": os.path.join(
+                            ge_root_dir, "checkpoints"
+                        ),
                     },
                 },
             },
@@ -107,9 +117,16 @@ def in_memory_data_context_config():
                     "show_how_to_buttons": True,
                     "store_backend": {
                         "class_name": "TupleFilesystemStoreBackend",
-                        "base_directory": os.path.join(ge_root_dir, "uncommitted", "data_docs", "local_site"),
+                        "base_directory": os.path.join(
+                            ge_root_dir,
+                            "uncommitted",
+                            "data_docs",
+                            "local_site",
+                        ),
                     },
-                    "site_index_builder": {"class_name": "DefaultSiteIndexBuilder"},
+                    "site_index_builder": {
+                        "class_name": "DefaultSiteIndexBuilder"
+                    },
                 }
             },
             "anonymous_usage_statistics": {
@@ -121,12 +138,10 @@ def in_memory_data_context_config():
         }
     )
 
-    return data_context_config
-
 
 @pytest.fixture
 def in_memory_checkpoint_config():
-    checkpoint_config = CheckpointConfig(
+    return CheckpointConfig(
         **{
             "name": "taxi.pass.from_config",
             "config_version": 1.0,
@@ -143,11 +158,16 @@ def in_memory_checkpoint_config():
                 },
                 {
                     "name": "store_evaluation_params",
-                    "action": {"class_name": "StoreEvaluationParametersAction"},
+                    "action": {
+                        "class_name": "StoreEvaluationParametersAction"
+                    },
                 },
                 {
                     "name": "update_data_docs",
-                    "action": {"class_name": "UpdateDataDocsAction", "site_names": []},
+                    "action": {
+                        "class_name": "UpdateDataDocsAction",
+                        "site_names": [],
+                    },
                 },
             ],
             "evaluation_parameters": {},
@@ -167,7 +187,6 @@ def in_memory_checkpoint_config():
             "expectation_suite_ge_cloud_id": None,
         }
     )
-    return checkpoint_config
 
 
 @pytest.fixture()
@@ -219,13 +238,17 @@ def constructed_sql_configured_datasource():
 
 @pytest.fixture()
 def mock_airflow_conn():
-    conn = mock.Mock(conn_id="sqlite_conn", schema="my_schema", host="host", conn_type="sqlite")
-    return conn
+    return mock.Mock(
+        conn_id="sqlite_conn",
+        schema="my_schema",
+        host="host",
+        conn_type="sqlite",
+    )
 
 
 @pytest.fixture()
 def runtime_sql_operator(in_memory_data_context_config):
-    operator = GreatExpectationsOperator(
+    return GreatExpectationsOperator(
         task_id="task_id",
         data_context_config=in_memory_data_context_config,
         data_asset_name="my_sqlite_table",
@@ -233,12 +256,11 @@ def runtime_sql_operator(in_memory_data_context_config):
         conn_id="sqlite_conn",
         expectation_suite_name="taxi.demo",
     )
-    return operator
 
 
 @pytest.fixture()
 def configured_sql_operator(in_memory_data_context_config):
-    operator = GreatExpectationsOperator(
+    return GreatExpectationsOperator(
         task_id="task_id",
         data_context_config=in_memory_data_context_config,
         data_asset_name="my_sqlite_table",
@@ -246,7 +268,6 @@ def configured_sql_operator(in_memory_data_context_config):
         expectation_suite_name="taxi.demo",
         run_name="my_run",
     )
-    return operator
 
 
 def test_great_expectations_operator__assert_template_fields_exist():

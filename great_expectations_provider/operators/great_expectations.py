@@ -163,14 +163,14 @@ class GreatExpectationsOperator(BaseOperator):
         self.query_to_validate: Optional[str] = query_to_validate
         self.checkpoint_name: Optional[str] = checkpoint_name
         self.checkpoint_config: Union[CheckpointConfig, Dict[Any, Any]] = (
-            checkpoint_config if checkpoint_config else {}
+            checkpoint_config or {}
         )
         self.checkpoint_kwargs: Optional[Dict[str, Any]] = checkpoint_kwargs
         self.fail_task_on_validation_failure: Optional[bool] = fail_task_on_validation_failure
         self.validation_failure_callback: Optional[Callable[[CheckpointResult], None]] = validation_failure_callback
         self.return_json_dict: bool = return_json_dict
         self.use_open_lineage = use_open_lineage
-        self.is_dataframe = True if self.dataframe_to_validate is not None else False
+        self.is_dataframe = self.dataframe_to_validate is not None
         self.datasource: Optional[Datasource] = None
         self.batch_request: Optional[BatchRequestBase] = None
         self.schema = schema
@@ -209,7 +209,11 @@ class GreatExpectationsOperator(BaseOperator):
                 " specified, the default Checkpoint is used."
             )
 
-        if not (self.checkpoint_name or self.checkpoint_config) and not self.expectation_suite_name:
+        if (
+            not self.checkpoint_name
+            and not self.checkpoint_config
+            and not self.expectation_suite_name
+        ):
             raise ValueError(
                 "An expectation_suite_name must be supplied if neither checkpoint_name nor checkpoint_config are."
             )
@@ -439,9 +443,7 @@ class GreatExpectationsOperator(BaseOperator):
             ge_cloud_id=None,
             expectation_suite_ge_cloud_id=None,
         ).to_json_dict()
-        filtered_config = deep_filter_properties_iterable(properties=checkpoint_config)
-
-        return filtered_config
+        return deep_filter_properties_iterable(properties=checkpoint_config)
 
     def execute(self, context: "Context") -> Union[CheckpointResult, Dict[str, Any]]:
         """
@@ -499,10 +501,7 @@ class GreatExpectationsOperator(BaseOperator):
         self.log.info("GE Checkpoint Run Result:\n%s", result)
         self.handle_result(result)
 
-        if self.return_json_dict:
-            return result.to_json_dict()
-
-        return result
+        return result.to_json_dict() if self.return_json_dict else result
 
     def handle_result(self, result: CheckpointResult) -> None:
         """Handle the given validation result.
@@ -525,15 +524,16 @@ class GreatExpectationsOperator(BaseOperator):
             if self.fail_task_on_validation_failure:
                 result_list = []
                 for _, value in result.run_results.items():
-                    result_information = {}
-                    result_information["statistics"] = value["validation_result"].statistics
-                    result_information["expectation_suite_name"] = value["validation_result"].meta[
-                        "expectation_suite_name"
-                    ]
-                    result_information["batch_definition"] = value["validation_result"].meta["active_batch_definition"]
-                    result_list.append(result_information)
-                    result_list.append("\n")
-
+                    result_information = {
+                        "statistics": value["validation_result"].statistics,
+                        "expectation_suite_name": value["validation_result"].meta[
+                            "expectation_suite_name"
+                        ],
+                        "batch_definition": value["validation_result"].meta[
+                            "active_batch_definition"
+                        ],
+                    }
+                    result_list.extend((result_information, "\n"))
                 if len(result_list) < 3:
                     result_list = result_list[0]
 

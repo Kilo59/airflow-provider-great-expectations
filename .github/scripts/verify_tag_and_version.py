@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Verify the version of the Package with the version in Git tag."""
 
+
 import os
 import re
 from pathlib import Path
@@ -13,6 +14,5 @@ git_ref = os.getenv("GITHUB_REF", "")
 git_tag = git_ref.replace("refs/tags/", "")
 version = re.findall('__version__ = "(.*)"', version_file)[0]
 
-if git_tag is not None:
-    if version != git_tag:
-        raise SystemExit(f"The version in {path_of_init_file} ({version}) does not match the Git Tag ({git_tag}).")
+if git_tag is not None and version != git_tag:
+    raise SystemExit(f"The version in {path_of_init_file} ({version}) does not match the Git Tag ({git_tag}).")
